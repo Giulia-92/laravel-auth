@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\PostController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -26,6 +27,7 @@ Route::middleware('auth')
 ->prefix('admin') // sarebbe localhost:8080/admin/home
 ->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
+    Route::resource('/posts','PostController');
 });
 Route::get("{any?}",function() {
     return view("guest.home");
