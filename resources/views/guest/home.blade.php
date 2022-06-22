@@ -27,16 +27,11 @@
                     @endauth
                 </div>
             @endif
+            <div id="root"></div>
 
-            <div class="content">
-                <div class="title m-b-md">
-                
-                  <h2 class="text-center">Benvenuto su Boolpress Accedi o Registrati</h2>
-                   
-                </div>
-
-                
-            </div>
+            
         </div>
+        <script src="{{ asset('js/front.js') }}" defer></script> 
+
     </body>
 </html>
