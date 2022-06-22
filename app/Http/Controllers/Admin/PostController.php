@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Post;
+use Illuminate\Support\Str; 
 
 class PostController extends Controller
 {
@@ -42,8 +43,18 @@ class PostController extends Controller
 
         $newPost = new Post();
         $newPost->title = $data['title'];
+        $slug = Str::of($data['title'])->slug("-");
         $newPost->content = $data['content'];
         $newPost->published = isset($data['published']);
+        $count = 1;
+        While(Post::where('slug',$slug)->first()){
+            $slug = Str::of($data['title'])->slug("-") . "-{$count}";
+        $count++;      
+     }
+            $newPost->slug = $slug;
+            $newPost->save();
+
+            return redirect()->route('admin.posts.show',$newPost->id);
         
     }
 
