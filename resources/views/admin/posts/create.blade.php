@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-<form action="{{route('admin.posts.store')}}" method="POST">
+<div class="container">
+    <form action="{{route('admin.posts.store')}}" method="POST">
     @csrf
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
@@ -18,4 +19,5 @@
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+</div>
 @endsection
