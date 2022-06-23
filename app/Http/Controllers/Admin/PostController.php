@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Post;
+use App\Category;
 use Illuminate\Support\Str; 
 
 class PostController extends Controller
@@ -27,7 +28,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view ('admin.posts.create');
+        $categories = Category::all();
+        return view ('admin.posts.create',compact('$categories'));
+
     }
 
     /**
@@ -38,6 +41,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        //$request
         $data = $request->all();
         //dd($data);
 
@@ -46,6 +50,7 @@ class PostController extends Controller
         $slug = Str::of($data['title'])->slug("-");
         $newPost->content = $data['content'];
         $newPost->published = isset($data['published']);
+        $newPost->category_id = $data['category_id'];
         $count = 1;
         While(Post::where('slug',$slug)->first()){
             $slug = Str::of($data['title'])->slug("-") . "-{$count}";
@@ -67,6 +72,7 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
+       
          return view( 'admin.posts.show', compact( 'post' ) );
        
     }
@@ -79,7 +85,9 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        $categories = Category::all();
+        return view( 'admin.posts.edit', compact('post','categories'));
     }
 
     /**
@@ -89,9 +97,23 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Post $post )
     {
-        //
+       $data = $request->all();
+       if ($post->title != $data ['title']){
+        $post->title = $data['title'];
+        $slug = Str::of($data['title'])->slug("-");
+        if ($slug != $post->slug){
+            $post->$slug = $this->getSlug ($post->title);
+        }
+       }
+       $post->content = $data['content'];
+       $post->category_id = $data['category_id'];
+       $post->published = isset($data["published"]);
+       $post->update();
+       return redirect()->route('admin.post.show', $post->id);
+
+
     }
 
     /**
@@ -102,6 +124,28 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $post->delete();
+       return redirect()->route('admin.posts.index')->with("message","post with id:{$post->id} successfully deleted !");
+
     }
+
+    /** 
+     * Generate an unique slug
+     * 
+     * @param  string $title
+     * @return string
+     */
+    private function getSlug($title)
+    {
+        $slug = Str::of($title)->slug("-");
+        $count = 1; 
+
+        While(Post::where('slug',$slug)->first()){
+            $slug = Str::of($data['title'])->slug("-") . "-{$count}";
+        $count++;      
+     }
+
+     return $slug;
+
+      }
 }

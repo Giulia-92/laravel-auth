@@ -17,6 +17,14 @@
       <input type="checkbox" class="form-check-input" {{old('published') ? 'checked' : ''}} id="published"  name="published">
       <label class="form-check-label" for="published">pubblicato</label>
     </div>
+    <label for="catgory" class="form-label">Category</label>
+    <select name="category_id" id="category" class="form-control">
+      @foreach ($categories as $category)
+      <option value="{{$category->id}}">{{$category->name}}</option>
+          
+      @endforeach
+      <option value=""></option>
+    </select>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
